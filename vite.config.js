@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/dice-game',
+  base: '/dice-game/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -21,6 +21,12 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name].js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: `assets/[name].[ext]`,
+      },
+    },
   },
 });
