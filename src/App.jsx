@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import ErrorBoundary from '@components/ErrorBoundary';
 import LoadingSpinner from '@components/LoadingSpinner';
@@ -11,7 +11,7 @@ const NotFoundPage = lazy(() => import('@pages/NotFound.jsx'));
 
 const App = () => {
   return (
-    <Router>
+    <Router basename="/dice-game">
       <ErrorBoundary>
         <AllProviders>
           <Suspense fallback={<LoadingSpinner />}>
