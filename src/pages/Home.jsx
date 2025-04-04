@@ -1,10 +1,13 @@
-const HomePage = () => {
+import DicePage from '../components/Game/DicePage.jsx';
+import DisplayBar from '../components/Game/DisplayBar.jsx';
+
+const Home = () => {
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Welcome to our app!</h2>
-      <p>This is the home page content.</p>
-    </div>
+    <main className="bg-[#e0f7fa] m-0 flex content-center items-center min-h-screen h-full">
+      <DisplayBar />
+      <DicePage />
+    </main>
   );
 };
 
-export default HomePage;
+export default Home;

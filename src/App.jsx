@@ -1,23 +1,32 @@
-import React from 'react';
+import { lazy, Suspense } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import DefaultLayout from '@layouts/DefaultLayout';
-import HomePage from '@pages/Home';
-import ReactPage from '@pages/React';
-import NotFoundPage from '@pages/NotFound';
+
+import ErrorBoundary from '@components/ErrorBoundary';
+import LoadingSpinner from '@components/LoadingSpinner';
+import { AllProviders } from '@contexts/providers.jsx';
+
+const DefaultLayout = lazy(() => import('@layouts/DefaultLayout'));
+const HomePage = lazy(() => import('@pages/Home.jsx'));
+const NotFoundPage = lazy(() => import('@pages/NotFound.jsx'));
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        {/* Routes with DefaultLayout */}
-        <Route element={<DefaultLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/react" element={<ReactPage />} />
-        </Route>
+      <ErrorBoundary>
+        <AllProviders>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* Routes with DefaultLayout */}
+              <Route element={<DefaultLayout />}>
+                <Route path="/" element={<HomePage />} />
+              </Route>
 
-        {/* 404 Not Found Route */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+              {/* 404 Not Found Route */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </AllProviders>
+      </ErrorBoundary>
     </Router>
   );
 };
