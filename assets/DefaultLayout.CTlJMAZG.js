@@ -1,0 +1,2 @@
+import{j as e,L as r,O as t}from"./vendor-react.B5Kz-_CL.js";import{P as o}from"./vendor.B5jnI0H-.js";const a=({children:s})=>e.jsxs("main",{className:"flex-grow",children:[e.jsx(r,{position:"top-right",autoClose:1e3,hideProgressBar:!0,newestOnTop:!0,closeOnClick:!0,rtl:!1,pauseOnFocusLoss:!0,draggable:!0,pauseOnHover:!1,theme:"light"}),e.jsx(t,{children:s})]});a.propTypes={children:o.node.isRequired};export{a as default};
+//# sourceMappingURL=DefaultLayout.CTlJMAZG.js.map

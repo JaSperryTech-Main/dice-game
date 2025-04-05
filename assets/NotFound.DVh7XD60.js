@@ -1,0 +1,2 @@
+import{j as e,b as o}from"./vendor-react.B5Kz-_CL.js";import"./vendor.B5jnI0H-.js";const r=()=>e.jsxs("div",{className:"text-center py-12",children:[e.jsx("h1",{className:"text-4xl font-bold mb-4",children:"404 - Page Not Found"}),e.jsx("p",{className:"mb-6",children:"The page you're looking for doesn't exist."}),e.jsx(o,{to:"/",className:"px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700",children:"Go to Home"})]});export{r as default};
+//# sourceMappingURL=NotFound.DVh7XD60.js.map
