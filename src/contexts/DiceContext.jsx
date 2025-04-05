@@ -39,12 +39,12 @@ const createDice = (initialState = {}) => ({
     Epic_D6: { id: 'epic', sides: 6, multiplier: 2.0 },
 
     // Legendary
-    Legendary_D1: { id: 'legendary', sides: 1, multiplier: 2.3 },
-    Legendary_D2: { id: 'legendary', sides: 2, multiplier: 2.3 },
-    Legendary_D3: { id: 'legendary', sides: 3, multiplier: 2.3 },
-    Legendary_D4: { id: 'legendary', sides: 4, multiplier: 2.3 },
-    Legendary_D5: { id: 'legendary', sides: 5, multiplier: 2.3 },
-    Legendary_D6: { id: 'legendary', sides: 6, multiplier: 2.3 },
+    Legendary_D1: { id: 'legendary', sides: 1, multiplier: 2.5 },
+    Legendary_D2: { id: 'legendary', sides: 2, multiplier: 2.5 },
+    Legendary_D3: { id: 'legendary', sides: 3, multiplier: 2.5 },
+    Legendary_D4: { id: 'legendary', sides: 4, multiplier: 2.5 },
+    Legendary_D5: { id: 'legendary', sides: 5, multiplier: 2.5 },
+    Legendary_D6: { id: 'legendary', sides: 6, multiplier: 2.5 },
   },
   ...initialState,
 });

@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: '/dice-game/',
@@ -21,15 +20,24 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 1600,
-    outDir: 'dist',
-    assetsDir: 'assets',
     emptyOutDir: true,
+    sourcemap: true, // Added for better debugging
     rollupOptions: {
       output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('zustand') || id.includes('react-router')) {
+              return 'vendor-state';
+            }
+            return 'vendor';
+          }
+        },
         entryFileNames: `assets/[name].[hash].js`,
         chunkFileNames: `assets/[name].[hash].js`,
-        assetFileNames: `assets/[name].[hash].[ext]`,
+        assetFileNames: `assets/[name].[hash][extname]`,
       },
     },
   },

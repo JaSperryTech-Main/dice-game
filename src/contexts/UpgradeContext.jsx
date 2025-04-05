@@ -11,6 +11,7 @@ const createUpgrade = (initialState = []) => [
       title: 'Roll Speed',
       cost: 1,
       description: 'Desceases Roll Speed',
+      max: 10,
     },
   ],
   ...initialState,

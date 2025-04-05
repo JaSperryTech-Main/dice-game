@@ -1,6 +1,5 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { createContext } from 'react';
-import { useState } from 'react';
 
 const PlayerContext = createContext();
 
@@ -14,9 +13,38 @@ const createPlayer = (initialState = {}) => ({
   ...initialState,
 });
 
-export const PlayerProvider = ({ children }) => {
-  const [player, setPlayer] = useState(createPlayer());
+// Helper function to load from localStorage
+const loadPlayer = () => {
+  try {
+    const savedData = localStorage.getItem('playerData');
+    return savedData ? JSON.parse(savedData) : null;
+  } catch (error) {
+    console.error('Failed to parse player data:', error);
+    return null;
+  }
+};
 
+// Helper function to save to localStorage
+const savePlayer = (player) => {
+  try {
+    localStorage.setItem('playerData', JSON.stringify(player));
+  } catch (error) {
+    console.error('Failed to save player data:', error);
+  }
+};
+
+export const PlayerProvider = ({ children }) => {
+  const [player, setPlayer] = useState(() => {
+    const savedPlayer = loadPlayer();
+    return savedPlayer ? createPlayer(savedPlayer) : createPlayer();
+  });
+
+  // Save to localStorage whenever player changes
+  useEffect(() => {
+    savePlayer(player);
+  }, [player]);
+
+  // All your existing player methods remain the same
   const addGold = (amount) => {
     setPlayer((prev) => ({
       ...prev,
@@ -27,7 +55,7 @@ export const PlayerProvider = ({ children }) => {
   const removeGold = (amount) => {
     setPlayer((prev) => ({
       ...prev,
-      gold: prev.gold - amount,
+      gold: Math.max(0, prev.gold - amount), // Prevent negative gold
     }));
   };
 
@@ -64,7 +92,7 @@ export const PlayerProvider = ({ children }) => {
       ...prev,
       upgrades: {
         ...prev.upgrades,
-        [upgrade]: prev.upgrades[upgrade] - amount,
+        [upgrade]: Math.max(0, (prev.upgrades[upgrade] || 0) - amount),
       },
     }));
   };
@@ -74,25 +102,16 @@ export const PlayerProvider = ({ children }) => {
       ...prev,
       upgrades: {
         ...prev.upgrades,
-        [upgrade]: (prev.upgrades[upgrade] = amount),
+        [upgrade]: amount,
       },
     }));
   };
 
-  const mergeDice = (diceId) => {
-    setPlayer((prev) => {
-      const diceCount = prev.dices.filter((dice) => dice === diceId).length;
-
-      if (diceCount < 4) {
-        console.log('Not enough dice to merge!');
-        return prev;
-      }
-
-      const diceTiers = ['Normal', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
-      const match = diceId.match(
-        /(Normal|Uncommon|Rare|Epic|Legendary)_D(\d+)/
-      );
-    });
+  // Add a reset function
+  const resetPlayer = () => {
+    if (window.confirm('Are you sure you want to reset all progress?')) {
+      setPlayer(createPlayer());
+    }
   };
 
   return (
@@ -108,6 +127,7 @@ export const PlayerProvider = ({ children }) => {
         addUpgrade,
         removeUpgrade,
         setUpgrade,
+        resetPlayer,
       }}
     >
       {children}
