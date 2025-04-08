@@ -17,6 +17,7 @@ export default defineConfig({
       '@contexts': path.resolve(__dirname, 'src/contexts'),
       '@layouts': path.resolve(__dirname, 'src/layouts'),
       '@pages': path.resolve(__dirname, 'src/pages'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
     },
   },
   build: {

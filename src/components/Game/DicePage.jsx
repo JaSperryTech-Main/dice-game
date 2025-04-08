@@ -10,12 +10,33 @@ const DicePage = () => {
   const { player, addGold } = usePlayer();
   const { dice } = useDice();
   const [isRolling, setIsRolling] = useState(false);
+  const [autoRoll, setAutoRoll] = useState(false);
+  const autoRollInterval = useRef(null);
   const diceRefs = useRef([]);
 
   // Reset refs when dice change
   useEffect(() => {
     diceRefs.current = player.dices.map((_, i) => diceRefs.current[i] || null);
   }, [player.dices]);
+
+  useEffect(() => {
+    if (autoRoll) {
+      const cooldown = Math.max(
+        1000,
+        5000 * Math.pow(0.97, player.upgrades.autoRoll || 0)
+      );
+
+      autoRollInterval.current = setInterval(() => {
+        if (!isRolling) {
+          onRoll();
+        }
+      }, cooldown);
+    } else {
+      clearInterval(autoRollInterval.current);
+    }
+
+    return () => clearInterval(autoRollInterval.current);
+  }, [autoRoll, isRolling, player.upgrades.autoRoll]);
 
   const onRoll = async () => {
     if (isRolling) return;
@@ -153,18 +174,54 @@ const DicePage = () => {
         })}
       </div>
 
-      <button
-        onClick={onRoll}
-        disabled={isRolling}
-        aria-label="Roll Dice"
-        className={`absolute bottom-5 left-1/2 transform -translate-x-1/2 px-8 py-4 text-lg cursor-pointer border-none rounded-full transition-all duration-300 ease-in-out ${
-          isRolling
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-green-500 hover:bg-green-600 text-white'
-        }`}
-      >
-        {isRolling ? `Rolling...` : 'Roll Dice'}
-      </button>
+      {/* Bottom Controls */}
+      <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
+        {/* Cooldown text - only when autoRoll is ON */}
+        {autoRoll && (
+          <p className="text-sm text-gray-500 mb-1 text-center">
+            Auto roll every{' '}
+            {(
+              Math.max(
+                1000,
+                5000 * Math.pow(0.97, player.upgrades.autoRoll || 0)
+              ) / 1000
+            ).toFixed(2)}
+            s
+          </p>
+        )}
+
+        {/* Button Row */}
+        <div className="flex gap-4">
+          {/* Roll Dice Button */}
+          <button
+            onClick={onRoll}
+            disabled={isRolling}
+            aria-label="Roll Dice"
+            className={`px-8 py-4 text-lg rounded-full transition-all duration-300 ease-in-out ${
+              isRolling
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600 text-white'
+            }`}
+          >
+            {isRolling ? `Rolling...` : 'Roll Dice'}
+          </button>
+
+          {/* Auto Roll Button - only show if upgrade > 0 */}
+          {(player.upgrades.autoRoll || 0) > 0 && (
+            <button
+              onClick={() => setAutoRoll((prev) => !prev)}
+              aria-label="Toggle Auto Roll"
+              className={`px-6 py-4 text-md rounded-full transition-all duration-300 ${
+                autoRoll
+                  ? 'bg-red-500 text-white'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              {autoRoll ? 'Stop Auto Roll' : 'Start Auto Roll'}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

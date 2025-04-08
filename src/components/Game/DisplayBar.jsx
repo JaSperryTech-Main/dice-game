@@ -3,6 +3,7 @@ import { usePlayer } from '@contexts/PlayerContext.jsx';
 import { useUpgrade } from '@contexts/UpgradeContext.jsx';
 import { usePacks } from '@contexts/PackContext.jsx';
 import { toast } from 'react-toastify';
+import { formatToAbbreviated } from '@utils/formatNumbers.js';
 
 const DisplayBar = () => {
   const { player, removeGold, addDice, getUpgrades, addUpgrade } = usePlayer();
@@ -52,7 +53,9 @@ const DisplayBar = () => {
       );
     } else {
       toast.error(
-        `💰 You need ${totalCost - player.gold} more gold for ${upgrade.title}`,
+        `💰 You need ${
+          totalCost - formatToAbbreviated(player.gold)
+        } more gold for ${upgrade.title}`,
         {
           position: 'top-right',
           autoClose: 1000,
@@ -81,7 +84,7 @@ const DisplayBar = () => {
     } else {
       toast.error(
         `💰 You need ${
-          packInstance.cost - player.gold
+          packInstance.cost - formatToAbbreviated(player.gold)
         } more gold to open ${packName}`,
         {
           position: 'top-right',
@@ -101,7 +104,9 @@ const DisplayBar = () => {
     <aside className="w-[33vw] h-screen p-5 box-border bg-[#f8f8f8] flex flex-col text-center">
       {/* Gold + Tabs */}
       <div className="w-full flex justify-between items-center mb-5">
-        <p className="text-lg font-semibold">Gold: {player.gold.toFixed(0)}</p>
+        <p className="text-lg font-semibold">
+          Gold: {formatToAbbreviated(player.gold)}
+        </p>
         <div className="flex gap-2">
           <button
             onClick={() => setActivePage('upgrades')}
@@ -194,7 +199,9 @@ const DisplayBar = () => {
                 className="grid grid-cols-1 gap-2 p-4 border rounded bg-white shadow"
               >
                 <h2 className="text-xl font-bold">{packName}</h2>
-                <p className="text-gray-700">Cost: {packInstance.cost} coins</p>
+                <p className="text-gray-700">
+                  Cost: {formatToAbbreviated(packInstance.cost)} coins
+                </p>
                 <button
                   className={`${buttonClass} text-black px-4 py-2 rounded`}
                   onClick={() => handleOpenPack(packName, packInstance)}

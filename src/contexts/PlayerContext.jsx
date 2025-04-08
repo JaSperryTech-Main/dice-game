@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { createContext } from 'react';
+import { UPGRADE_MAX_LIMITS } from './UpgradeContext';
 
 const PlayerContext = createContext();
 
@@ -13,11 +14,29 @@ const createPlayer = (initialState = {}) => ({
   ...initialState,
 });
 
+// Helper function to clamp upgrade values to their max
+const clampUpgrade = (upgrade, value) => {
+  const max = UPGRADE_MAX_LIMITS[upgrade];
+  return max !== undefined ? Math.min(value, max) : value;
+};
+
+// Helper function to clamp all upgrades in a player object
+const clampAllUpgrades = (player) => {
+  if (!player?.upgrades) return player;
+
+  for (const upgrade in player.upgrades) {
+    player.upgrades[upgrade] = clampUpgrade(upgrade, player.upgrades[upgrade]);
+  }
+
+  return player;
+};
+
 // Helper function to load from localStorage
 const loadPlayer = () => {
   try {
     const savedData = localStorage.getItem('playerData');
-    return savedData ? JSON.parse(savedData) : null;
+    const player = savedData ? JSON.parse(savedData) : null;
+    return clampAllUpgrades(player);
   } catch (error) {
     console.error('Failed to parse player data:', error);
     return null;
@@ -27,7 +46,8 @@ const loadPlayer = () => {
 // Helper function to save to localStorage
 const savePlayer = (player) => {
   try {
-    localStorage.setItem('playerData', JSON.stringify(player));
+    const clampedPlayer = clampAllUpgrades({ ...player }); // Optional: clone before clamping
+    localStorage.setItem('playerData', JSON.stringify(clampedPlayer));
   } catch (error) {
     console.error('Failed to save player data:', error);
   }
@@ -57,6 +77,31 @@ export const PlayerProvider = ({ children }) => {
       ...prev,
       gold: Math.max(0, prev.gold - amount), // Prevent negative gold
     }));
+  };
+
+  const formatGold = (amount) => {
+    if (amount < 1000) return amount.toString();
+
+    const suffixes = [
+      '',
+      'K',
+      'M',
+      'B',
+      'T',
+      'Qa',
+      'Qi',
+      'Sx',
+      'Sp',
+      'Oc',
+      'No',
+      'Dc',
+    ];
+    const tier = Math.floor(Math.log10(amount) / 3);
+    const suffix = suffixes[tier] || '';
+    const scale = Math.pow(10, tier * 3);
+    const scaled = amount / scale;
+
+    return scaled.toFixed(2).replace(/\.00$/, '') + suffix;
   };
 
   const addDice = (id) => {
@@ -120,6 +165,7 @@ export const PlayerProvider = ({ children }) => {
         player,
         addGold,
         removeGold,
+        formatGold,
         addDice,
         removeDice,
         getUpgrades,
